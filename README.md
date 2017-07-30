@@ -1,4 +1,6 @@
 # Tachikoma - db migration tool
+https://travis-ci.org/lambdasakura/tachikoma.svg?branch=master
+[![Build Status](https://travis-ci.org/lambdasakura/tachikoma.svg?branch=master)](https://travis-ci.org/lambdasakura/tachikoma.svg?branch=master)
 
 ## Usage
 
