@@ -87,4 +87,5 @@
   (is (executable-migration-list '("00001.sql" "00002.sql" "00003.sql")
                                  meta-data-list) '("00003.sql")))
 
+(uiop:delete-file-if-exists test-database)
 (finalize)
