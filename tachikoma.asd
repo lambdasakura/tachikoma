@@ -18,12 +18,11 @@
   :version "0.1"
   :author "lambda_sakura"
   :license "LLGPL"
-  :depends-on (:cl-dbi :cl-ppcre)
+  :depends-on (:cl-dbi :cl-ppcre :envy :osicat)
   :components ((:module "src"
                 :serial t
                 :components
-                ((:file "migration")
-                 (:file "tachikoma"))))
+                ((:file "tachikoma"))))
   :description "migration tool"
   :long-description
   #.(with-open-file (stream (merge-pathnames

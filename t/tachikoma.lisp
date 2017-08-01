@@ -2,7 +2,6 @@
 (defpackage tachikoma-test
   (:use :cl
         :tachikoma
-        :migration
         :prove))
 (in-package :tachikoma-test)
 
@@ -12,11 +11,11 @@
 
 (defparameter test-data-dir
   (asdf:system-relative-pathname
-   :tachikoma #P"t/test-data/"))
+   :tachikoma #P"t/test-migration/"))
 
 (defparameter option `(:sqlite3 :database-name ,test-database))
 
-(plan 11)
+(plan 9)
 
 (subtest "MigrationMeta Test"
          (uiop:delete-file-if-exists test-database)
@@ -37,7 +36,7 @@
              "can find migration files")
          (is (first (find-migration-files test-data-dir))
              (asdf:system-relative-pathname
-              :tachikoma #P"t/test-data/0000-sample.sql"))
+              :tachikoma #P"t/test-migration/0000-sample.sql"))
          (is (length (load-migrations-from-directory test-data-dir '())) 2)
          (is (migration-name (first (load-migrations-from-directory test-data-dir '())))
              "0000-sample")
@@ -49,7 +48,7 @@
          (initialize option)
          (let ((migration-sample (load-migration-from-file
                                   (asdf:system-relative-pathname
-                                   :tachikoma #P"t/test-data/0000-sample.sql")
+                                   :tachikoma #P"t/test-migration/0000-sample.sql")
                                   '())))
            (is (migration-name migration-sample) "0000-sample")
            (diag "up migration")
@@ -75,7 +74,7 @@
          (initialize option)
          (let ((migrations (load-migrations-from-directory test-data-dir (meta-data-list option))))
            (mapc #'(lambda (x)
-                       (execute-up-migration x option)) migrations)
+                     (execute-up-migration x option)) migrations)
 
            (is (length (meta-data-list option)) 2)))
 
@@ -83,8 +82,12 @@
   (is (valid-migration-p "00003.sql" meta-data-list) t)
   (is (valid-migration-p "00002.sql" meta-data-list) nil)
   (is (valid-migration-p "00000.sql" meta-data-list) nil)
-  (is (executable-migration-list '("00001.sql" "00003.sql") meta-data-list) nil)
-  (is (executable-migration-list '("00001.sql" "00002.sql" "00003.sql")
-                                 meta-data-list) '("00003.sql")))
+  (is (executable-up-migration-list `(,(make-migration :name "00001.sql")
+                                    ,(make-migration :name "00003.sql")) meta-data-list) nil)
+  (is (executable-up-migration-list `(,(make-migration :name "00001.sql")
+                                    ,(make-migration :name "00002.sql")
+                                    ,(make-migration :name "00003.sql"))
+                                 meta-data-list) `(,(make-migration :name "00003.sql")) :test #'equalp))
 
+(uiop:delete-file-if-exists test-database)
 (finalize)
