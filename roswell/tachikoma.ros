@@ -1,0 +1,35 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|
+exec ros -m tachikoma -Q -- $0 "$@"
+|#
+
+(ql:quickload :tachikoma :silent t)
+(mapc #'unintern '(print-help main))
+
+(defun print-help ()
+  (write-line "Usage: tachikoma [options] command")
+  (write-line "Options:")
+  (write-line "  -d DIRECTORY  Use DIRECTORY as a directory include migration-files.")
+  (write-line "  -h            Print this message and exit.")
+  (write-line "  -v            Verbose mode.")
+  (write-line "Commands:")
+  (write-line "  up            Execute whole up migrations.")
+  (write-line "  down          Execute whole down migrations."))
+
+(defun main (&rest argv)
+  (declare (ignorable argv))
+  (let (commands pathname d-mode)
+    (loop for arg in argv
+       do (cond
+            (d-mode (setf pathname arg)
+                    (setf d-mode nil))
+            ((string= "-d" arg) (setf d-mode t))
+            ((string= "-h" arg) (print-help)
+             (ros:quit 1))
+            (t (push arg commands))))
+    (if commands
+        (loop for command in (nreverse commands)
+           do (format t "~S~%" command)))
+    (print-help)
+    (ros:quit 1)))
