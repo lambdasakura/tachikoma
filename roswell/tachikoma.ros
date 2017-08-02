@@ -19,7 +19,7 @@ exec ros -m tachikoma -Q -- $0 "$@"
 
 (defun main (&rest argv)
   (declare (ignorable argv))
-  (let (commands migration-dir config-path d-mode c-mode p-mode)
+  (let (commands migration-dir config-path d-mode c-mode p-mode package-name)
     (loop for arg in argv
        do (cond
             (d-mode (setf migration-dir arg)

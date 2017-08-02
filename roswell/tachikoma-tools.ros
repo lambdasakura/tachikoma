@@ -12,9 +12,6 @@ exec ros -Q -- $0 "$@"
 (defun main (&optional $1 &rest argv)
   (declare (ignorable argv))
   (cond ((string= "dump" $1)
-         (format t "~S~%" (list "-e" "\"(ros:ignore-shebang)\"" "-l"
-               (namestring (make-pathname :defaults *load-pathname* :name "tachikoma"))
-               "dump" "output" "-f" "tachikoma"))
          (ros:roswell (list "-e" "\"(ros:ignore-shebang)\"" "-l"
                              (namestring (make-pathname :defaults *load-pathname* :name "tachikoma"))
                              "dump" "output" "-f" "tachikoma") nil nil))
