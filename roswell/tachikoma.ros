@@ -19,20 +19,24 @@ exec ros -m tachikoma -Q -- $0 "$@"
 
 (defun main (&rest argv)
   (declare (ignorable argv))
-  (let (commands migration-dir config-path d-mode c-mode)
+  (let (commands migration-dir config-path d-mode c-mode p-mode)
     (loop for arg in argv
        do (cond
             (d-mode (setf migration-dir arg)
                     (setf d-mode nil))
             (c-mode (setf config-path arg)
                     (setf c-mode nil))
+            (p-mode (setf package-name arg)
+                    (setf p-mode nil))
             ((string= "-c" arg) (setf c-mode t))
             ((string= "-d" arg) (setf d-mode t))
+            ((string= "-p" arg) (setf p-mode t))
             ((string= "-h" arg) (print-help)
              (ros:quit 1))
             (t (push arg commands))))
     (let ((params `(,@(when config-path `(:config-path ,config-path))
-                      ,@(when migration-dir `(:migration-dir ,migration-dir)))))
+                    ,@(when migration-dir `(:migration-dir ,migration-dir))
+                    ,@(when package-name `(:config-package-name ,config-package-name)))))
       (if commands
           (loop for command in (nreverse commands)
              do (apply #'tachikoma:execute-command command params))
