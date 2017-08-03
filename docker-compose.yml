@@ -1,0 +1,16 @@
+version: '2'
+
+services:
+    tachikoma:
+        build:
+            context: ./
+            dockerfile: Dockerfile
+        working_dir: /usr/src/app
+        volumes:
+            - "./:/usr/src/app"
+        command: bash -c "qlot install && qlot exec lake test"
+    postgres:
+        image: postgres
+        environment:
+            POSTGRES_PASSWORD: ""
+            POSTGRES_DB: tachikoma
