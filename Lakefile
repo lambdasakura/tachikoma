@@ -10,7 +10,9 @@
 
 (task "default" ())
 (task "test" ()
-      (load #p"tachikoma.asd")
-      (load #p"tachikoma-test.asd")
+      (ql:quickload :cffi-grovel)
+      (ql:quickload :prove)
+      (ql:quickload :tachikoma)
+      (ql:quickload :tachikoma-test)
       (asdf:test-system :tachikoma))
 ;;; here follow your tasks...

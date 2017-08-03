@@ -1,6 +1,7 @@
 (in-package :cl-user)
 (defpackage tachikoma
   (:export :initialize
+           :remove-meta-data
            :valid-migration-p
            :execute-up-migration
            :execute-down-migration
@@ -39,13 +40,19 @@
 ;;
 ;; Manipulate MetaData Table
 ;;
-(defparameter meta-data-table-name "'MigrationMeta'")
+(defparameter meta-data-table-name "\"MigrationMeta\"")
+
+(defun remove-meta-data (option)
+  (let ((query (format nil "DROP TABLE IF EXISTS ~A;" meta-data-table-name))
+        (connection (apply #'dbi:connect option)))
+    (dbi:execute (dbi:prepare connection query))
+    (dbi:disconnect connection)))
 
 (defun meta-data-list (option)
   (let* ((query (format nil "SELECT * FROM ~A;" meta-data-table-name))
          (connection (apply #'dbi:connect option))
          (result (sort (mapcar #'(lambda (x) (getf x :|migration_name|))
-                               (dbi:fetch-all (dbi:prepare connection query)))
+                               (dbi:fetch-all (dbi:execute (dbi:prepare connection query))))
                        #'string<=)))
     (dbi:disconnect connection)
     result))
@@ -64,7 +71,7 @@
 
 (defun initialize (option)
   (let ((query (format nil "CREATE TABLE IF NOT EXISTS ~A (migration_name text);" meta-data-table-name))
-        (connection (apply #'dbi:connect option)))
+         (connection (apply #'dbi:connect option)))
     (dbi:execute (dbi:prepare connection query))
     (dbi:disconnect connection)))
 

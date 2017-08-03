@@ -1,0 +1,5 @@
+ql cl-dbi :latest
+ql cl-ppcre :latest
+ql envy :latest
+ql osicat :latest
+ql prove :latest

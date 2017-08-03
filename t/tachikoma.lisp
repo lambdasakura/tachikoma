@@ -17,6 +17,24 @@
 
 (plan 9)
 
+(subtest "MigrationMeta(postgres) Test"
+         (let ((postgres `(:postgres
+                           :username "postgres"
+                           :host "postgres"
+                           :database-name "tachikoma")))
+           (remove-meta-data postgres)
+           (initialize postgres)
+           (add-migration postgres "0000-migration")
+           (add-migration postgres "0001-migration")
+           (add-migration postgres "0002-migration")
+           (add-migration postgres "0003-migration")
+           (is (length (meta-data-list postgres)) 4 "can add metadata")
+
+           (delete-migration postgres "0002-migration")
+           (delete-migration postgres "0003-migration")
+           (is (length (meta-data-list postgres)) 2 "can remove metadata")))
+
+
 (subtest "MigrationMeta Test"
          (uiop:delete-file-if-exists test-database)
          (initialize option)

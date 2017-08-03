@@ -1,7 +1,11 @@
 language: common-lisp
 sudo: required
+services:
+    - postgreql
 
 install:
         - curl -L https://raw.githubusercontent.com/snmsts/roswell/release/scripts/install-for-ci.sh | sh
+before_script:
+          - psql -c 'create database tachikoma;' -U postgres
 script:
         - ros -s prove -e '(or (prove:run :tachikoma-test) (uiop:quit -1))'
