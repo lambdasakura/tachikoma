@@ -17,11 +17,18 @@
 
 (plan 9)
 
+(defun postgres-config ()
+  (if (uiop:getenv "TRAVIS")
+      `(:postgres
+        :username "postgres"
+        :database-name "tachikoma")
+      `(:postgres
+        :host "postgres"
+        :username "postgres"
+        :database-name "tachikoma")))
+
 (subtest "MigrationMeta(postgres) Test"
-         (let ((postgres `(:postgres
-                           :username "postgres"
-                           :host "postgres"
-                           :database-name "tachikoma")))
+         (let ((postgres (postgres-config)))
            (remove-meta-data postgres)
            (initialize postgres)
            (add-migration postgres "0000-migration")
