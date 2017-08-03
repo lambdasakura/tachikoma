@@ -39,7 +39,7 @@
 ;;
 ;; Manipulate MetaData Table
 ;;
-(defparameter meta-data-table-name "MigrationMeta")
+(defparameter meta-data-table-name "'MigrationMeta'")
 
 (defun meta-data-list (option)
   (let* ((query (format nil "SELECT * FROM ~A;" meta-data-table-name))
